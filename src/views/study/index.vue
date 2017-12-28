@@ -4,7 +4,7 @@
       <p>门店编制</p>
       <div class="right" slot="right">添加门店</div>
     </bm-header>
-    <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="20">
+    <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="disabled" infinite-scroll-distance="20">
       <li v-for="(item, index) in storeList" v-bind:key="index">
         <div class="items-top">
           {{item.storeId}} {{item.storeName}}
@@ -31,7 +31,10 @@ export default {
       storeList: 'study/storeList',
       loading: 'storeAuthorized/storeList/loading',
       loaded: 'storeAuthorized/storeList/loaded'
-    })
+    }),
+    disabled () {
+      return this.loading || this.loaded
+    }
     // success () {
     //   return !(this.storeList.length === 0 && this.loaded)
     // }
