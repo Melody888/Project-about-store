@@ -1,0 +1,16 @@
+/* 组件里千万不要用原子类 */
+/* 字体大小 */
+.f0 {font-size: 0;}
+.f8 {font-size: .08rem;}
+.f9 {font-size: .09rem;}
+.f10 {font-size: .10rem;}
+.f11 {font-size: .11rem;}
+.f12 {font-size: .12rem;}
+.f13 {font-size: .13rem;}
+.f14 {font-size: .14rem;}
+.f15 {font-size: .15rem;}
+.f16 {font-size: .16rem;}
+.f17 {font-size: .17rem;}
+.f18 {font-size: .18rem;}
+.f19 {font-size: .19rem;}
+.f20 {font-size: .20rem;}

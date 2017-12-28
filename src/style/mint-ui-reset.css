@@ -1,0 +1,12 @@
+.cancel-confirm-btn{
+  color:#26a2ff;
+}
+.cancel-confirm-btn:active{
+  color:#26a2ff;
+}
+.mint-indicator-wrapper{
+  z-index:101;
+}
+.mint-indicator-mask {
+  z-index: 101;
+}
