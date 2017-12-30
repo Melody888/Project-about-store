@@ -13,7 +13,7 @@
           <div class=""><span>总编制/已到位(人)：</span>
           <span>{{item.sumPerNum}}</span>/<span>{{item.readyPerNum}}</span>
           </div>
-          <div class="edit-btn" @click="toDetail" >编辑/查看</div>
+          <div class="edit-btn" @click="toDetail(item.storeId,index)" >编辑/查看</div>
         </div>
       </li>
     </ul>
@@ -29,8 +29,8 @@ export default {
   computed: {
     ...mapGetters({
       storeList: 'study/storeList',
-      loading: 'storeAuthorized/storeList/loading',
-      loaded: 'storeAuthorized/storeList/loaded'
+      loading: 'study/loading',
+      loaded: 'study/loaded'
     }),
     disabled () {
       return this.loading || this.loaded
@@ -41,7 +41,8 @@ export default {
   },
   methods: {
     toDetail (storeId, index) {
-      this.$router.push({ path: '/study/editDetail' })
+      this.$router.push({path: '/study/editDetail', query: {storeId: storeId, num: index}})
+      this.$store.commit('study/storeId', storeId)
     },
     loadMore () {
       this.$store.dispatch('study/getstoreList')

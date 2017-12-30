@@ -4,79 +4,79 @@
       <p>编辑编制</p>
       <div class="right" slot="right">保存修改</div>
     </bm-header>
-    <ul>
-      <li v-for="(item, index) in list" v-bind:key="index">
-        <div class="items-text">
+            <div class="items-text">
         <div class="items-top">
-          {{item.Id}} {{item.Name}}
+          {{storeId}} {{storeName}}
         </div>  
           <div class="items-center">
-            <div class=""><span>总编制/已到位(人)：</span> 
-            <span>{{item.sumNum}}</span>/<span>{{item.readyNum}}</span>
+            <span>总编制/已到位(人)：</span> 
+            <span>{{totalSumPerNum}}</span>/<span>{{totalReadyPerNum}}</span>
           </div>   
           </div>
-          </div>
-
+    <ul>
+      <li v-for="(item, index) in projectList" v-bind:key="index">
           <div class="person-detail">
-          <span class="person-name">{{item.person}}</span>
-           <span class="edit-btn">
+          <span class="person-name">{{item.fieldDesc}}</span>
+           <span class="edit-btn" @click="toProjectPerList()">
             编辑/查看
            </span> 
            </div>    
 
             <div class="add-detail">
           <div class=""><span>总编制/已到位(人)：</span> 
-            <span>{{item.sumNum}}</span>/<span>{{item.readyNum}}</span>
+            <span>{{item.sumPerNum}}</span>/<span>{{item.readyPerNum}}</span>
             <i class="icon icon-add"></i>
             <span class="add-btn">
             添加人员
            </span> 
           </div>  
            </div>
-           <div class="item-scroll add-detail">
+           <div class="item-scroll add-detail" v-for="(innerItem, innerIndex) in item.personList" v-bind:key="innerIndex">
              <i class="icon icon-people"></i>
-            <span class="Num">{{item.personNum}}</span>-<span>{{item.personName}}</span>
-            <div class="date"><span>{{ item.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ item.endDate | datetime('YYYY/MM/DD')}}</span></div>
+            <span class="Num">{{innerItem.userId}}</span>-<span>{{innerItem.userName}}</span>
+            <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
              <div class="descript"> 
-              <div class="state" v-for="fild in desList"  v-bind:key="fild">{{fild}}
-              </div>
-              <!-- <div class="stars" v-show="per.levelNum == 0 ? false : true">
-              <input type="radio"  :value="1" :class="{'active': per.levelNum > 0}" >
-              <input type="radio"  :value="2" :class="{'active': per.levelNum > 1}">
-              <input type="radio"  :value="3" :class="{'active': per.levelNum > 2}">
-              <input type="radio"  :value="4" :class="{'active': per.levelNum > 3}">
-              <input type="radio"  :value="5" :class="{'active': per.levelNum > 4}">
-            </div> -->
+              <div class="state" v-for="state in innerItem.levelContent.split(',')" :key="state">{{state}}</div>
+              <div class="stars" v-show="innerItem.levelNum == 0 ? false : true">
+              <input type="radio"  :value="1" :class="{'active': innerItem.levelNum > 0}" >
+              <input type="radio"  :value="2" :class="{'active': innerItem.levelNum > 1}">
+              <input type="radio"  :value="3" :class="{'active': innerItem.levelNum > 2}">
+              <input type="radio"  :value="4" :class="{'active': innerItem.levelNum > 3}">
+              <input type="radio"  :value="5" :class="{'active': innerItem.levelNum > 4}">
+            </div>
            </div>
-          </div> 
-         
-           
-             
+          </div>              
       </li>
     </ul>
   </bm-layout>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 export default {
   data () {
-    return {
-      list: [
-        { Id: 2510702,
-          Name: '苏州好又多',
-          sumNum: 10,
-          readyNum: 3,
-          person: '项目经理',
-          personNum: 88888888,
-          personName: '陈塔星',
-          startDate: '2017/11/17',
-          endDate: '2018/11/17'
-        }
-      ],
-      desList: ['本地化', '未培训']
+    return {}
+  },
+  computed: {
+    ...mapGetters({
+      // detail: 'lasdlkfjasdkfja',
+      storeId: 'study/getstoreId',
+      storeName: 'study/getstoreName',
+      totalSumPerNum: 'study/getsumPerNum',
+      totalReadyPerNum: 'study/getreadyPerNum',
+      projectList: 'study/getprojectList'
+    })
+  },
+  methods: {
+    geteditDetail () {
+      return this.$store.dispatch('study/getprojectList')
+    },
+    toProjectPerList (storeId, index) {
+      this.$router.push({path: 'study/editProjectPerList'})
     }
   },
-  computed: {},
-  methods: {}
+  created () {
+    this.geteditDetail()
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -187,6 +187,7 @@ export default {
   padding:18px 10px;
   font-size: 0.13rem;
   color:#333;
+  
   .Num {
     margin-left:0.18rem;
   }
@@ -203,10 +204,9 @@ export default {
   font-size:0.12px;
 }
 .stars{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 0.15rem;
+      display: inline-block;
+      float: right;
+      margin-top:10px;
     &>input[type=radio]{
       appearance:none;
       width: .12rem;

@@ -5,9 +5,16 @@ export default {
   namespaced: true,
   state: {
     storeList: [],
+    // storeList [] = [klajslkfja]
     loading: false,
     loaded: false,
-    pageIndex: 0
+    pageIndex: 0,
+    // detail: {}
+    storeId: '',
+    storeName: '',
+    totalSumPerNum: '',
+    totalReadyPerNum: '',
+    projectList: null
   },
   getters: {
     storeList (state) {
@@ -21,6 +28,21 @@ export default {
     },
     pageIndex (state) {
       return state.pageIndex
+    },
+    getstoreId (state) {
+      return state.storeId
+    },
+    getstoreName (state) {
+      return state.storeName
+    },
+    getsumPerNum (state) {
+      return state.totalSumPerNum
+    },
+    getreadyPerNum (state) {
+      return state.totalReadyPerNum
+    },
+    getprojectList (state) {
+      return state.projectList
     }
   },
   actions: {
@@ -60,6 +82,22 @@ export default {
           }
         })
       }
+    },
+    getprojectList ({commit, state}) {
+      const storeId = state.storeId
+      return api.study.getOrgInfoByStoreId({
+        data: {
+          storeId: storeId,
+          token: simpleLocalDb.getItem('token')
+        }
+      }).then(result => {
+        if (result.responseCode === 0) {
+          commit('storeId', result.storeOrgVo.storeId)
+          commit('totalSumPerNum', result.storeOrgVo.sumPerNum)
+          commit('totalReadyPerNum', result.storeOrgVo.readyPerNum)
+          commit('projectList', result.storeOrgVo.projectList)
+        }
+      })
     }
   },
   mutations: {
@@ -74,6 +112,22 @@ export default {
     },
     pageIndex (state, payload) {
       state.pageIndex = payload
+    },
+    storeId (state, payload) {
+      state.storeId = payload
+    },
+    storeName (state, payload) {
+      state.storeName = payload
+    },
+    totalSumPerNum (state, payload) {
+      state.totalSumPerNum = payload
+    },
+    totalReadyPerNum (state, payload) {
+      state.totalReadyPerNum = payload
+    },
+    projectList (state, payload) {
+      state.projectList = payload
     }
+
   }
 }
