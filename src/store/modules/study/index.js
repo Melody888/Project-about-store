@@ -93,6 +93,7 @@ export default {
       }).then(result => {
         if (result.responseCode === 0) {
           commit('storeId', result.storeOrgVo.storeId)
+          commit('storeName', result.storeOrgVo.storeName)
           commit('totalSumPerNum', result.storeOrgVo.sumPerNum)
           commit('totalReadyPerNum', result.storeOrgVo.readyPerNum)
           commit('projectList', result.storeOrgVo.projectList)
