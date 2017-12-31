@@ -164,9 +164,8 @@
         <span>{{totalSumPerNum}}/{{totalReadyPerNum}}</span>
       </div>
     </div>
-
     <div>
-      <div class="item" v-for="pro in projectList">
+      <div class="item" v-for="pro in storeOrgVo.projectList">
         <div class="line-1" :key="pro.fieldCode">
           <div class="f15-c333 bold w">{{pro.fieldDesc}}</div>
           <div class="f13-c0A8 edit-style" @click="toEditPost('edit', pro.fieldCode, storeOrgVo.storeId)"><span>编辑</span>/<span>查看</span></div>

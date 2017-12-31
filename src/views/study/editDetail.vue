@@ -36,7 +36,7 @@
             <span class="Num">{{innerItem.userId}}</span>-<span>{{innerItem.userName}}</span>
             <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
              <div class="descript"> 
-              <div class="state" v-for="state in innerItem.levelContent.split(',')" v-if="state" :key="state">{{state}}</div>
+              <div class="state" v-for="state in innerItem.fieldList" v-if="state.selectDesc" :key="state">{{state.selectDesc}}</div>
               <div class="stars" v-show="innerItem.levelNum == 0 ? false : true">
               <input type="radio"  :value="1" :class="{'active': innerItem.levelNum > 0}" >
               <input type="radio"  :value="2" :class="{'active': innerItem.levelNum > 1}">
@@ -206,7 +206,7 @@ export default {
 .stars{
       display: inline-block;
       float: right;
-      margin-top:10px;
+      margin-top:17px;
     &>input[type=radio]{
       appearance:none;
       width: .12rem;
