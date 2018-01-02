@@ -2,7 +2,7 @@
   <bm-layout>
     <bm-header>
       <p>门店编制</p>
-      <div class="right" slot="right">添加门店</div>
+      <div class="right" slot="right" @click="addStore">添加门店</div>
     </bm-header>
     <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="disabled" infinite-scroll-distance="20">
       <li v-for="(item, index) in storeList" v-bind:key="index">
@@ -21,6 +21,8 @@
 </template>
 <script>
 import {mapGetters} from 'vuex'
+import BmSelectPage from '@/components/plugins/BmSelectPage'
+import CompSelectStore from '@/views/common/selectStore'
 
 export default {
   data () {
@@ -50,6 +52,12 @@ export default {
     // 调用store的action
     getList () {
       return this.$store.dispatch('study/getstoreList')
+    },
+    addStore (storeId, index) {
+      BmSelectPage({ component: CompSelectStore }).then(res => {
+        console.log(123)
+      })
+      // this.$router.push({path: '/study/selectStore', query: {storeId: storeId, type: 'add'}})
     }
   }
 }

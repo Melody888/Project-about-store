@@ -1,6 +1,6 @@
 <template>
   <bm-layout>
-    <bm-header>
+    <bm-header slot="header">
       <p>编辑编制</p>
       <div class="right" slot="right">保存修改</div>
     </bm-header>
@@ -14,7 +14,7 @@
           </div>   
           </div>
     <ul>
-      <li v-for="(item, index) in projectList" v-bind:key="index">
+      <li v-for="(item, index) in projectList">
           <div class="person-detail">
           <span class="person-name">{{item.fieldDesc}}</span>
            <span class="edit-btn" @click="toProjectPerList()">
@@ -31,12 +31,12 @@
            </span> 
           </div>  
            </div>
-           <div class="item-scroll add-detail" v-for="(innerItem, innerIndex) in item.personList" v-bind:key="innerIndex">
+           <div class="item-scroll add-detail" v-for="(innerItem, innerIndex) in item.personList">
              <i class="icon icon-people"></i>
             <span class="Num">{{innerItem.userId}}</span>-<span>{{innerItem.userName}}</span>
             <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
              <div class="descript"> 
-              <div class="state" v-for="state in innerItem.fieldList" v-if="state.selectDesc" :key="state">{{state.selectDesc}}</div>
+              <div class="state" v-for="state in innerItem.fieldList" v-if="state.selectDesc">{{state.selectDesc}}</div>
               <div class="stars" v-show="innerItem.levelNum == 0 ? false : true">
               <input type="radio"  :value="1" :class="{'active': innerItem.levelNum > 0}" >
               <input type="radio"  :value="2" :class="{'active': innerItem.levelNum > 1}">
@@ -58,7 +58,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      // detail: 'lasdlkfjasdkfja',
       storeId: 'study/getstoreId',
       storeName: 'study/getstoreName',
       totalSumPerNum: 'study/getsumPerNum',

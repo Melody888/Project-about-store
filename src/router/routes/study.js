@@ -6,9 +6,10 @@ export default [
   {
     path: '/study/editDetail',
     component: require('@/views/study/editDetail')
+  },
+  {
+    path: '/study/selectStore',
+    component: require('@/views/study/selectStore')
   }
-// {
-//     path: '/study/addshop/:id',
-//     component: () => import('@/views/study/addshop')
-//   }
+
 ]
