@@ -1,7 +1,7 @@
 <template>
   <bm-layout>
       <bm-header slot="header">
-          <div>{{fieldDesc}}</div>        
+          <div class="header">{{fieldDesc}}</div>        
       </bm-header>
       <div slot="header" class="nav-top">
      <span class="ber">编制/</span><span class="per">人</span><input type="number" class="p-num" v-model="localsum"><div class="saveBtn" @click="saveSumPerNum">确认编制数</div>   
@@ -38,7 +38,7 @@
         <ul>
            <li class="item-scroll add-detail" v-for="(innerItem, innerIndex) in historyPerList">
              <i class="icon icon-people icon-people-grey"></i>
-            <span class="Num">{{innerItem.userId}}-{{innerItem.userName}}</span>
+            <div class="Num">{{innerItem.userId}}-{{innerItem.userName}}</div>
             <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
              <div class="descript"> 
               <div class="state state-grey" v-for="state in innerItem.fieldList" v-if="state.fieldDesc">{{state.fieldDesc}}</div>
@@ -101,6 +101,13 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.header {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 .nav-top {
     // height:63px;
     padding: 0.15rem 0.1rem;
@@ -188,11 +195,12 @@ export default {
   color:#333;
   position: relative;
   .Num {
+    width:160px;
     margin-left:0.18rem;
     display: inline-block;
     overflow:hidden;
     text-overflow:ellipsis;
-    white-space:nowrap;  
+    white-space:nowrap; 
   }  
  }
  .nowList {

@@ -26,14 +26,14 @@
           <div class=""><span>总编制/已到位(人)：</span> 
             <span>{{item.sumPerNum}}</span>/<span>{{item.readyPerNum}}</span>
             <i class="icon icon-add"></i>
-            <span class="add-btn">
+            <span class="add-btn" @click="toAdd(item.fieldCode, storeId)">
             添加人员
            </span> 
           </div>  
            </div>
            <div class="item-scroll add-detail" v-for="(innerItem, innerIndex) in item.personList">
              <i class="icon icon-people"></i>
-            <span class="Num">{{innerItem.userId}}-{{innerItem.userName}}</span>
+            <div class="Num">{{innerItem.userId}}-{{innerItem.userName}}</div>
             <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
              <div class="descript"> 
               <div class="state" v-for="state in innerItem.fieldList" v-if="state.selectDesc">{{state.selectDesc}}</div>
@@ -52,9 +52,13 @@
 </template>
 <script>
 import {mapGetters} from 'vuex'
+import BmSelectPage from '@/components/plugins/BmSelectPage'
+import selectPerson from '@/views/common/selectPerson'
 export default {
   data () {
-    return {}
+    return {
+      routeLeave: true
+    }
   },
   computed: {
     ...mapGetters({
@@ -87,6 +91,7 @@ export default {
       }
     }
   },
+
   methods: {
     geteditDetail () {
       return this.$store.dispatch('study/getprojectList')
@@ -95,7 +100,32 @@ export default {
       this.$store.commit('study/fieldCode', fieldCode)
       this.$store.commit('study/storeId', storeId)
       this.$router.push({path: '/study/editProjectPerList', query: {fieldCode: fieldCode, storeId: storeId, type: type, value: value}})
+    },
+    toAdd (filedCode, storeId) {
+      BmSelectPage({
+        component: selectPerson
+      }).then(data => {
+        if (!data) return
+        this.$router.push(`/study/editPersonnel?type=add&userId=${data.userId}&fieldCode=${filedCode}&storeId=${storeId}`)
+      }, error => {
+        console.log(error)
+      })
     }
+    // beforeRouteLeave (to, from, next) {
+    //   if (to.path === '/study' && this.routeLeave) {
+    //     this.$messagebox.confirm('确定离开当前编辑页面？', {
+    //       confirmButtonText: '确 定',
+    //       cancelButtonText: '取 消',
+    //       cancelButtonClass: 'cancel-confirm-btn'
+    //     }).then(() => {
+    //       next()
+    //     }, () => {
+    //       this.$router.go(1)
+    //     })
+    //   } else {
+    //     next()
+    //   }
+    // }
   },
   created () {
     this.geteditDetail()
@@ -114,7 +144,6 @@ export default {
   border-bottom: 1px solid #d7d7d7;
   box-shadow: 0 0 0 0 #d7d7d7;
   background: #ffffff;
-  margin-bottom: 10px;
   height: 90px; 
   box-sizing:border-box;
   position: relative;
@@ -131,16 +160,20 @@ export default {
   } 
 }
 .person-detail {
-  height:66px;
+  margin-top: 10px;
   border-bottom: 1px solid #d7d7d7;
   box-shadow: 0 0 0 0 #d7d7d7;
   background-color: #ffffff;
   font-family:PingFangSC-Semibold;
-  padding:18px 10px;
+  padding: .18rem .1rem .17rem;
   .person-name {
+      display: inline-block;
       font-size:0.15rem;
       color:#333333;
       font-weight: 700;
+      width: 269px;
+      overflow: hidden;
+      word-break: break-all
   }
    .edit-btn {  
     font-size: 0.13rem;
@@ -152,12 +185,11 @@ export default {
 }
 
 .add-detail {
-  height:63px;
   border-bottom: 1px solid #d7d7d7;
   box-shadow: 0 0 0 0 #d7d7d7;
   background-color: #ffffff;
   font-family:PingFangSC-Semibold;
-  padding:18px 10px;
+  padding: 0.175rem 0.1rem;
   font-size: 0.13rem;
   font-weight:500;
   color: #666;
@@ -199,6 +231,7 @@ export default {
       display: inline-block;
       float: right;
       color:#999;
+      font-size: 0.12rem;
       margin-left:0.18rem;
     }
 
@@ -212,6 +245,7 @@ export default {
   font-size: 0.13rem;
   color:#333;
   .Num {
+    width:160px;
     margin-left:0.18rem;
     display: inline-block;
     overflow:hidden;
