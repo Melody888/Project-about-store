@@ -45,6 +45,7 @@ export default {
     toDetail (storeId, index) {
       this.$router.push({path: '/study/editDetail', query: {storeId: storeId, num: index}})
       this.$store.commit('study/storeId', storeId)
+      this.$store.commit('study/projectList', null)
     },
     loadMore () {
       this.$store.dispatch('study/getstoreList')

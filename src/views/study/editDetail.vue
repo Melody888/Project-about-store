@@ -17,7 +17,7 @@
       <li v-for="(item, index) in projectList">
           <div class="person-detail">
           <span class="person-name">{{item.fieldDesc}}</span>
-           <span class="edit-btn" @click="toProjectPerList(item.fieldCode,storeId,'edit')">
+           <span class="edit-btn" @click="toProjectPerList(item.fieldCode,storeId,'edit',item.sumPerNum)">
             编辑/查看
            </span> 
            </div>    
@@ -64,15 +64,23 @@ export default {
       totalReadyPerNum: 'study/getreadyPerNum',
       projectList: 'study/getprojectList'
     })
+    // totalSumPerNum () {
+    //   let res = 0
+    //   this.projectList.forEach(function (v) {
+    //     res += v.sumPerNum
+    //   })
+    //   return res
+    // }
   },
   methods: {
     geteditDetail () {
+      // this.$store.commit('study/projectList', null)
       return this.$store.dispatch('study/getprojectList')
     },
-    toProjectPerList (fieldCode, storeId, type) {
+    toProjectPerList (fieldCode, storeId, type, value) {
       this.$store.commit('study/fieldCode', fieldCode)
       this.$store.commit('study/storeId', storeId)
-      this.$router.push({path: '/study/editProjectPerList', query: {fieldCode: fieldCode, storeId: storeId, type: type}})
+      this.$router.push({path: '/study/editProjectPerList', query: {fieldCode: fieldCode, storeId: storeId, type: type, value: value}})
     }
   },
   created () {

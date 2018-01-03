@@ -9,7 +9,6 @@ export default {
     loading: false,
     loaded: false,
     pageIndex: 0,
-    // detail: {}
     storeId: '',
     storeName: '',
     totalSumPerNum: '',
@@ -90,21 +89,24 @@ export default {
     },
     // 编辑编制
     getprojectList ({commit, state}) {
-      const storeId = state.storeId
-      return api.study.getOrgInfoByStoreId({
-        data: {
-          storeId: storeId,
-          token: simpleLocalDb.getItem('token')
-        }
-      }).then(result => {
-        if (result.responseCode === 0) {
-          commit('storeId', result.storeOrgVo.storeId)
-          commit('storeName', result.storeOrgVo.storeName)
-          commit('totalSumPerNum', result.storeOrgVo.sumPerNum)
-          commit('totalReadyPerNum', result.storeOrgVo.readyPerNum)
-          commit('projectList', result.storeOrgVo.projectList)
-        }
-      })
+      console.log(state.projectList)
+      if (state.projectList == null) {
+        const storeId = state.storeId
+        return api.study.getOrgInfoByStoreId({
+          data: {
+            storeId: storeId,
+            token: simpleLocalDb.getItem('token')
+          }
+        }).then(result => {
+          if (result.responseCode === 0) {
+            commit('storeId', result.storeOrgVo.storeId)
+            commit('storeName', result.storeOrgVo.storeName)
+            commit('totalSumPerNum', result.storeOrgVo.sumPerNum)
+            commit('totalReadyPerNum', result.storeOrgVo.readyPerNum)
+            commit('projectList', result.storeOrgVo.projectList)
+          }
+        })
+      }
     },
     // 项目成员
     getPersonList ({commit, state}) {
@@ -153,16 +155,21 @@ export default {
     projectList (state, payload) {
       state.projectList = payload
     },
+    updateProjecListSumPerNum (state, payload) {
+      let items = state.projectList
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].fieldCode === payload.code) {
+          items[i].sumPerNum = payload.value
+        }
+      }
+    },
+      // let item = state.projectList.找到需要修改的项
+      // item.sumPerNum = payload.value
     fieldCode (state, payload) {
       state.fieldCode = payload
     },
     projectPerVo (state, payload) {
       state.projectPerVo = payload
-    },
-    // 查看项目人员详细列表修改编制人数
-    updateSumPerNum (state, payload) {
-      state.totalSumPerNum = payload
     }
-
   }
 }

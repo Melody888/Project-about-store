@@ -4,11 +4,12 @@
           <div>{{fieldDesc}}</div>        
       </bm-header>
       <div slot="header" class="nav-top">
-     <span class="ber">编制/</span><span class="per">人</span><input type="number" class="p-num" v-model="sumPerNum" @input="changeNumber"><div class="saveBtn" @click="saveSumPerNum">确认编制数</div>   
+     <span class="ber">编制/</span><span class="per">人</span><input type="number" class="p-num" v-model="localsum"><div class="saveBtn" @click="saveSumPerNum">确认编制数</div>   
       </div>
       <div class="flex justify-around item-line">
           <div class="hr-line"></div><span class="f12">人员名单</span><div class="hr-line"></div>
       </div>
+      <div class="no-project-perVo" v-if="nowPerList.length < 1">暂无有效人员</div>
       <ul>
        <li class="item-scroll add-detail nowList" v-for="(Item, Index) in nowPerList">
              <i class="icon icon-people"></i>
@@ -30,8 +31,8 @@
           </li>
           </ul>
           <div>
-          <div class="flex justify-around item-line">
-          <div class="hr-line"></div><span class="f12">历史人员</span><div class="hr-line"></div>
+          <div class="flex justify-around item-line" v-if="historyPerList.length > 0">
+          <div class="hr-line"></div><span class="f12" >历史人员</span><div class="hr-line"></div>
           </div>
 
         <ul>
@@ -60,7 +61,9 @@ import { Toast } from 'mint-ui'
 
 export default {
   data () {
-    return {}
+    return {
+      local: 0
+    }
   },
   computed: {
     ...mapGetters({
@@ -84,18 +87,16 @@ export default {
       return this.$store.dispatch('study/getPersonList')
     },
     saveSumPerNum () {
+      this.$store.commit('study/updateProjecListSumPerNum', {
+        code: this.projectPerVo.fieldCode,
+        value: this.localsum
+      })
       Toast('编制数据维护成功')
-    },
-    changeNumber () {
-      let sumNum = this.projectPerVo.sumPerNum
-      if (sumNum.length > 3) {
-        this.projectPerVo.sumPerNum = sumNum.substr(0, 3)
-      }
-      this.$store.commit('study/updateSumPerNum', sumNum)
     }
   },
   created () {
     this.getpersonList()
+    this.localsum = this.$route.query.value
   }
 }
 </script>
@@ -247,6 +248,14 @@ export default {
       background:url(../../assets/storeAuthorized/ic_user_grey.png) no-repeat center center;
       background-size:100%;     
     } 
+  }
+  .no-project-perVo{
+    color:#d7d7d7;
+    height:0.44rem;
+    line-height: 0.44rem;
+    text-align: center;
+    font-size: 0.14rem;
+    color: #D7D7D7;
   }
 </style>
 
