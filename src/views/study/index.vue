@@ -1,6 +1,6 @@
 <template>
   <bm-layout>
-    <bm-header>
+    <bm-header slot="header">
       <p>门店编制</p>
       <div class="right" slot="right" @click="addStore">添加门店</div>
     </bm-header>
@@ -9,7 +9,7 @@
         <div class="items-top">
           {{item.storeId}} {{item.storeName}}
         </div>
-        <div class="items-center">
+      <div class="items-center">
           <div class=""><span>总编制/已到位(人)：</span>
           <span>{{item.sumPerNum}}</span>/<span>{{item.readyPerNum}}</span>
           </div>

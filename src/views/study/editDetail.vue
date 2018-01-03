@@ -4,7 +4,7 @@
       <p>编辑编制</p>
       <div class="right" slot="right">保存修改</div>
     </bm-header>
-            <div class="items-text">
+            <div  slot="header" class="items-text">
         <div class="items-top">
           {{storeId}} {{storeName}}
         </div>  
@@ -17,7 +17,7 @@
       <li v-for="(item, index) in projectList">
           <div class="person-detail">
           <span class="person-name">{{item.fieldDesc}}</span>
-           <span class="edit-btn" @click="toProjectPerList()">
+           <span class="edit-btn" @click="toProjectPerList(item)">
             编辑/查看
            </span> 
            </div>    
@@ -33,7 +33,7 @@
            </div>
            <div class="item-scroll add-detail" v-for="(innerItem, innerIndex) in item.personList">
              <i class="icon icon-people"></i>
-            <span class="Num">{{innerItem.userId}}</span>-<span>{{innerItem.userName}}</span>
+            <span class="Num">{{innerItem.userId}}-{{innerItem.userName}}</span>
             <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
              <div class="descript"> 
               <div class="state" v-for="state in innerItem.fieldList" v-if="state.selectDesc">{{state.selectDesc}}</div>
@@ -69,8 +69,10 @@ export default {
     geteditDetail () {
       return this.$store.dispatch('study/getprojectList')
     },
-    toProjectPerList (storeId, index) {
-      this.$router.push({path: 'study/editProjectPerList'})
+    toProjectPerList (item) {
+      this.$store.commit('study/fieldCode', item.fieldCode)
+      this.$store.commit('study/storeId', this.storeId)
+      this.$router.push({path: '/study/editProjectPerList'})
     }
   },
   created () {
@@ -175,6 +177,7 @@ export default {
       display: inline-block;
       float: right;
       color:#999;
+      margin-left:0.18rem;
     }
 
  .item-scroll {
@@ -186,11 +189,13 @@ export default {
   padding:18px 10px;
   font-size: 0.13rem;
   color:#333;
-  
   .Num {
     margin-left:0.18rem;
-  }
-  
+    display: inline-block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;  
+  }  
  }
 .state {
   padding:0.025rem 0.1rem;

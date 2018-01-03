@@ -14,7 +14,9 @@ export default {
     storeName: '',
     totalSumPerNum: '',
     totalReadyPerNum: '',
-    projectList: null
+    projectList: null,
+    fieldCode: '',
+    projectPerVo: null
   },
   getters: {
     storeList (state) {
@@ -43,6 +45,9 @@ export default {
     },
     getprojectList (state) {
       return state.projectList
+    },
+    getprojectPerVo (state) {
+      return state.projectPerVo
     }
   },
   actions: {
@@ -83,6 +88,7 @@ export default {
         })
       }
     },
+    // 编辑编制
     getprojectList ({commit, state}) {
       const storeId = state.storeId
       return api.study.getOrgInfoByStoreId({
@@ -97,6 +103,24 @@ export default {
           commit('totalSumPerNum', result.storeOrgVo.sumPerNum)
           commit('totalReadyPerNum', result.storeOrgVo.readyPerNum)
           commit('projectList', result.storeOrgVo.projectList)
+        }
+      })
+    },
+    // 项目成员
+    getPersonList ({commit, state}) {
+      const fieldCode = state.fieldCode
+      const storeId = state.storeId
+      return api.study.getProjectPerList({
+        data: {
+          fieldCode: fieldCode,
+          storeId: storeId,
+          token: simpleLocalDb.getItem('token')
+        }
+      }).then(res => {
+        if (res.responseCode === 0) {
+          commit('projectPerVo', res.projectPerVo)
+        } else {
+          console.log(false)
         }
       })
     }
@@ -128,6 +152,16 @@ export default {
     },
     projectList (state, payload) {
       state.projectList = payload
+    },
+    fieldCode (state, payload) {
+      state.fieldCode = payload
+    },
+    projectPerVo (state, payload) {
+      state.projectPerVo = payload
+    },
+    // 查看项目人员详细列表修改编制人数
+    updateSumPerNum (state, payload) {
+      state.storeOrgVo.projectList[payload.index].sumPerNum = payload.sumPerNum
     }
 
   }

@@ -10,7 +10,7 @@ export const getOrgInfoByStoreId = ({ data, params } = {}) => {
   return sfa.post('/storeOrg/getStoreOrgInfoByStoreId', data, { params })
 }
 // 03.根据参数获取项目成员列表信息
-export const getprojectList = ({ data, params } = {}) => {
+export const getProjectPerList = ({ data, params } = {}) => {
   return sfa.post('/storeOrg/getProjectPerList', data, { params })
 }
 // 04.根据参数人员配置信息

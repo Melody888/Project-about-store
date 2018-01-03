@@ -10,6 +10,10 @@ export default [
   {
     path: '/study/selectStore',
     component: require('@/views/study/selectStore')
+  },
+  {
+    path: '/study/editProjectPerList',
+    component: require('@/views/study/editProjectPerList')
   }
 
 ]
