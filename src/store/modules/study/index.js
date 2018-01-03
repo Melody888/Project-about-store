@@ -161,7 +161,7 @@ export default {
     },
     // 查看项目人员详细列表修改编制人数
     updateSumPerNum (state, payload) {
-      state.storeOrgVo.projectList[payload.index].sumPerNum = payload.sumPerNum
+      state.totalSumPerNum = payload
     }
 
   }

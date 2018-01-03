@@ -87,11 +87,11 @@ export default {
       Toast('编制数据维护成功')
     },
     changeNumber () {
-      let sumPerNum = this.projectPerVo.sumPerNum
-      if (sumPerNum.length > 3) {
-        this.projectPerVo.sumPerNum = sumPerNum.substr(0, 3)
+      let sumNum = this.projectPerVo.sumPerNum
+      if (sumNum.length > 3) {
+        this.projectPerVo.sumPerNum = sumNum.substr(0, 3)
       }
-      this.$store.commit('storeAuthorized/editDetail/updateSumPerNum', {index: this.ProjectIndex, sumPerNum: this.projectPerVo.sumPerNum})
+      this.$store.commit('study/updateSumPerNum', sumNum)
     }
   },
   created () {

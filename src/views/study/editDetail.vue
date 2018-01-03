@@ -17,7 +17,7 @@
       <li v-for="(item, index) in projectList">
           <div class="person-detail">
           <span class="person-name">{{item.fieldDesc}}</span>
-           <span class="edit-btn" @click="toProjectPerList(item)">
+           <span class="edit-btn" @click="toProjectPerList(item.fieldCode,storeId,'edit')">
             编辑/查看
            </span> 
            </div>    
@@ -69,10 +69,10 @@ export default {
     geteditDetail () {
       return this.$store.dispatch('study/getprojectList')
     },
-    toProjectPerList (item) {
-      this.$store.commit('study/fieldCode', item.fieldCode)
-      this.$store.commit('study/storeId', this.storeId)
-      this.$router.push({path: '/study/editProjectPerList'})
+    toProjectPerList (fieldCode, storeId, type) {
+      this.$store.commit('study/fieldCode', fieldCode)
+      this.$store.commit('study/storeId', storeId)
+      this.$router.push({path: '/study/editProjectPerList', query: {fieldCode: fieldCode, storeId: storeId, type: type}})
     }
   },
   created () {
