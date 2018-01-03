@@ -10,7 +10,7 @@
         </div>  
           <div class="items-center">
             <span>总编制/已到位(人)：</span> 
-            <span>{{totalSumPerNum}}</span>/<span>{{totalReadyPerNum}}</span>
+            <span>{{totalSumPerNum}}/{{totalReadyPerNum}}</span>
           </div>   
           </div>
     <ul>
@@ -60,21 +60,35 @@ export default {
     ...mapGetters({
       storeId: 'study/getstoreId',
       storeName: 'study/getstoreName',
-      totalSumPerNum: 'study/getsumPerNum',
-      totalReadyPerNum: 'study/getreadyPerNum',
+      // totalSumPerNum: 'study/getsumPerNum',
+      // totalReadyPerNum: 'study/getreadyPerNum',
       projectList: 'study/getprojectList'
-    })
-    // totalSumPerNum () {
-    //   let res = 0
-    //   this.projectList.forEach(function (v) {
-    //     res += v.sumPerNum
-    //   })
-    //   return res
-    // }
+    }),
+    totalSumPerNum () {
+      if (this.projectList && this.projectList.length > 0) {
+        let num = 0
+        this.projectList.forEach((item) => {
+          num += +item.sumPerNum
+        })
+        return num
+      } else {
+        return 0
+      }
+    },
+    totalReadyPerNum () {
+      if (this.projectList && this.projectList.length > 0) {
+        let num = 0
+        this.projectList.forEach((item) => {
+          num += item.personList.length
+        })
+        return num
+      } else {
+        return 0
+      }
+    }
   },
   methods: {
     geteditDetail () {
-      // this.$store.commit('study/projectList', null)
       return this.$store.dispatch('study/getprojectList')
     },
     toProjectPerList (fieldCode, storeId, type, value) {

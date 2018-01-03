@@ -5,14 +5,11 @@ export default {
   namespaced: true,
   state: {
     storeList: [],
-    // storeList [] = [klajslkfja]
     loading: false,
     loaded: false,
     pageIndex: 0,
     storeId: '',
     storeName: '',
-    totalSumPerNum: '',
-    totalReadyPerNum: '',
     projectList: null,
     fieldCode: '',
     projectPerVo: null
@@ -35,12 +32,6 @@ export default {
     },
     getstoreName (state) {
       return state.storeName
-    },
-    getsumPerNum (state) {
-      return state.totalSumPerNum
-    },
-    getreadyPerNum (state) {
-      return state.totalReadyPerNum
     },
     getprojectList (state) {
       return state.projectList
@@ -101,8 +92,6 @@ export default {
           if (result.responseCode === 0) {
             commit('storeId', result.storeOrgVo.storeId)
             commit('storeName', result.storeOrgVo.storeName)
-            commit('totalSumPerNum', result.storeOrgVo.sumPerNum)
-            commit('totalReadyPerNum', result.storeOrgVo.readyPerNum)
             commit('projectList', result.storeOrgVo.projectList)
           }
         })
@@ -146,12 +135,6 @@ export default {
     storeName (state, payload) {
       state.storeName = payload
     },
-    totalSumPerNum (state, payload) {
-      state.totalSumPerNum = payload
-    },
-    totalReadyPerNum (state, payload) {
-      state.totalReadyPerNum = payload
-    },
     projectList (state, payload) {
       state.projectList = payload
     },
@@ -163,8 +146,6 @@ export default {
         }
       }
     },
-      // let item = state.projectList.找到需要修改的项
-      // item.sumPerNum = payload.value
     fieldCode (state, payload) {
       state.fieldCode = payload
     },
