@@ -12,7 +12,9 @@ export default {
     storeName: '',
     projectList: null,
     fieldCode: '',
-    projectPerVo: null
+    userId: '',
+    projectPerVo: null,
+    personVo: null
   },
   getters: {
     storeList (state) {
@@ -38,6 +40,9 @@ export default {
     },
     getprojectPerVo (state) {
       return state.projectPerVo
+    },
+    getPersonInfoByParams (state) {
+      return state.personVo
     }
   },
   actions: {
@@ -73,14 +78,12 @@ export default {
             }
           } else {
             commit('loaded', true)
-          // Toast(result.responseMsg)
           }
         })
       }
     },
     // 编辑编制
     getprojectList ({commit, state}) {
-      console.log(state.projectList)
       if (state.projectList == null) {
         const storeId = state.storeId
         return api.study.getOrgInfoByStoreId({
@@ -114,7 +117,28 @@ export default {
           console.log(false)
         }
       })
+    },
+    // 添加成员
+    getPersonInfo ({commit, state}) {
+      const fieldCode = state.fieldCode
+      const storeId = state.storeId
+      const userId = state.userId
+      return api.study.getPersonInfoByParams({
+        data: {
+          fieldCode: fieldCode,
+          storeId: storeId,
+          userId: userId,
+          token: simpleLocalDb.getItem('token')
+        }
+      }).then(res => {
+        if (res.responseCode === 0) {
+          commit('personVo', res.personVo)
+        } else {
+          console.log(false)
+        }
+      })
     }
+
   },
   mutations: {
     storeList (state, payload) {
@@ -138,6 +162,7 @@ export default {
     projectList (state, payload) {
       state.projectList = payload
     },
+    // 修改项目编制数回到人员列表详情页看到对应项也修改
     updateProjecListSumPerNum (state, payload) {
       let items = state.projectList
       for (var i = 0; i < items.length; i++) {
@@ -151,6 +176,24 @@ export default {
     },
     projectPerVo (state, payload) {
       state.projectPerVo = payload
+    },
+    personVo (state, payload) {
+      state.personVo = payload
+    },
+    // 添加人员信息后同步更新到编制列表
+    refreshPersonListVo (state, playload) {
+      if (state.projectList && state.projectList.length > 0) {
+        state.projectList.forEach((item, FirIndex) => {
+          if (item.fieldCode === playload.fieldCode) {
+            if (playload.type === 'edit') {
+              state.projectList[FirIndex]['personList'].splice(playload.perIndex, 1, playload.personVo)
+            } else {
+              state.projectList[FirIndex]['personList'].unshift(playload.personVo)
+            }
+            return
+          }
+        })
+      }
     }
   }
 }

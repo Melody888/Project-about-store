@@ -14,6 +14,9 @@ export default [
   {
     path: '/study/editProjectPerList',
     component: require('@/views/study/editProjectPerList')
+  },
+  {
+    path: '/study/editPersonnel',
+    component: require('@/views/study/editPersonnel')
   }
-
 ]

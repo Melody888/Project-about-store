@@ -62,7 +62,7 @@ import { Toast } from 'mint-ui'
 export default {
   data () {
     return {
-      local: 0
+      localsum: 0
     }
   },
   computed: {

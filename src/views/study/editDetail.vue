@@ -64,8 +64,6 @@ export default {
     ...mapGetters({
       storeId: 'study/getstoreId',
       storeName: 'study/getstoreName',
-      // totalSumPerNum: 'study/getsumPerNum',
-      // totalReadyPerNum: 'study/getreadyPerNum',
       projectList: 'study/getprojectList'
     }),
     totalSumPerNum () {
@@ -101,31 +99,19 @@ export default {
       this.$store.commit('study/storeId', storeId)
       this.$router.push({path: '/study/editProjectPerList', query: {fieldCode: fieldCode, storeId: storeId, type: type, value: value}})
     },
-    toAdd (filedCode, storeId) {
+    toAdd (fieldCode, storeId) {
       BmSelectPage({
         component: selectPerson
       }).then(data => {
         if (!data) return
-        this.$router.push(`/study/editPersonnel?type=add&userId=${data.userId}&fieldCode=${filedCode}&storeId=${storeId}`)
+        this.$router.push(`/study/editPersonnel?type=add&userId=${data.userId}&fieldCode=${fieldCode}&storeId=${storeId}`)
+        // this.$storeId.commit('study.storeId', storeId)
+        // this.$userId.commit('study/userId', data.userId)
+        // this.$fieldCode.commit('study/fieldCode', fieldCode)
       }, error => {
         console.log(error)
       })
     }
-    // beforeRouteLeave (to, from, next) {
-    //   if (to.path === '/study' && this.routeLeave) {
-    //     this.$messagebox.confirm('确定离开当前编辑页面？', {
-    //       confirmButtonText: '确 定',
-    //       cancelButtonText: '取 消',
-    //       cancelButtonClass: 'cancel-confirm-btn'
-    //     }).then(() => {
-    //       next()
-    //     }, () => {
-    //       this.$router.go(1)
-    //     })
-    //   } else {
-    //     next()
-    //   }
-    // }
   },
   created () {
     this.geteditDetail()
