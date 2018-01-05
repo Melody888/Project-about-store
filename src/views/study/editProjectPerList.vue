@@ -14,7 +14,7 @@
        <li class="item-scroll add-detail nowList" v-for="(Item, Index) in nowPerList">
              <i class="icon icon-people"></i>
             <span class="Num">{{Item.userId}}-{{Item.userName}}</span>
-            <span class="edit">
+            <span class="edit" @click="editSave('edit', Item.userId, Index)">
             编辑
            </span> 
             <div class="nowDate"><span>{{ Item.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ Item.endDate | datetime('YYYY/MM/DD')}}</span></div>
@@ -72,6 +72,9 @@ export default {
     fieldDesc () {
       return this.projectPerVo ? this.projectPerVo.fieldDesc : ''
     },
+    fieldCode () {
+      return this.projectPerVo ? this.projectPerVo.fieldCode : ''
+    },
     sumPerNum () {
       return this.projectPerVo ? this.projectPerVo.sumPerNum : 0
     },
@@ -92,10 +95,22 @@ export default {
         value: this.localsum
       })
       Toast('编制数据维护成功')
+    },
+    editSave (type, userId, index) {
+      this.playload = this.$route.query
+      this.$router.push({path: '/study/editPersonnel', query: {type: type, userId: userId, storeId: this.playload.storeId, fieldCode: this.playload.fieldCode, index: index}})
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    if (from.path === '/study/editPersonnel') {
+      next()
+    } else {
+      next(vm => {
+        vm.getpersonList()
+      })
     }
   },
   created () {
-    this.getpersonList()
     this.localsum = this.$route.query.value
   }
 }

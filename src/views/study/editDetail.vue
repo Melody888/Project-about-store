@@ -105,9 +105,6 @@ export default {
       }).then(data => {
         if (!data) return
         this.$router.push(`/study/editPersonnel?type=add&userId=${data.userId}&fieldCode=${fieldCode}&storeId=${storeId}`)
-        // this.$storeId.commit('study.storeId', storeId)
-        // this.$userId.commit('study/userId', data.userId)
-        // this.$fieldCode.commit('study/fieldCode', fieldCode)
       }, error => {
         console.log(error)
       })

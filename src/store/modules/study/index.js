@@ -182,17 +182,34 @@ export default {
     },
     // 添加人员信息后同步更新到编制列表
     refreshPersonListVo (state, playload) {
+      console.log('>>>>>1')
       if (state.projectList && state.projectList.length > 0) {
+        console.log('>>>>2')
         state.projectList.forEach((item, FirIndex) => {
           if (item.fieldCode === playload.fieldCode) {
+            console.log('>>>>3')
             if (playload.type === 'edit') {
-              state.projectList[FirIndex]['personList'].splice(playload.perIndex, 1, playload.personVo)
+              console.log('>>>>4')
+              state.projectList[FirIndex]['personList'].splice(playload.index, 1, playload.personVo)
             } else {
               state.projectList[FirIndex]['personList'].unshift(playload.personVo)
             }
             return
           }
         })
+      }
+      if (playload.type === 'edit') {
+        console.log('>>>>5')
+        if (state.projectPerVo) {
+          if (state.projectPerVo.fieldCode === playload.fieldCode) {
+            console.log('>>>>6')
+            playload.personVo.fieldList.forEach((item) => {
+              item.fieldDesc = item.selectDesc
+            })
+            state.projectPerVo.nowPerList.splice(playload.index, 1, playload.personVo)
+          }
+          return
+        }
       }
     }
   }

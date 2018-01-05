@@ -94,7 +94,7 @@
     },
     computed: {
       ...mapGetters({
-        projectList: 'study/projectList'
+        projectList: 'study/getprojectList'
       }),
       limitStartDateBegin () { // 限制选择时间范围
         if (this.type === 'edit') {
@@ -174,7 +174,7 @@
           this.$router.go(-1)
         }
       },
-      selectValue (list, item) {  // 查字典 匹配对应fieldCode 文字描述
+      selectValue (list, item) {  // 判断选择是否完成，已选的清空，未选的做出选择
         if (list.fieldCode === item.selectCode) {
           item.selectCode = ''
           item.selectDesc = ''
@@ -190,9 +190,10 @@
       existStoreOrgVo () { // 从projectList 找到对应 人员信息
         this.projectList.forEach((item, index) => {
           if (item.fieldCode === this.playload.fieldCode) {
-            const sObj = JSON.stringify(item['personList'][this.playload.perIndex])
-            const pObj = JSON.parse(sObj)  // 深拷贝 断开双向绑定
-            this.personVo = pObj
+            const pstring = JSON.stringify(item['personList'][this.playload.index])
+
+            const pObject = JSON.parse(pstring)
+            this.personVo = pObject
           }
         })
       },
@@ -215,7 +216,7 @@
       },
       getPersonInfoByParams () { // 根据参数人员配置信息
         Indicator.open()
-        return api.storeAu.getPersonInfoByParams({
+        return api.study.getPersonInfoByParams({
           data: {
             fieldCode: this.playload.fieldCode,
             storeId: this.playload.storeId,
@@ -237,26 +238,26 @@
           return
         }
         let isEmpty = false
-        let dec = ''
+        let letter = ''
         personVo['fieldList'].forEach(item => {
           if (item.fieldContent && !item.selectCode) {
             isEmpty = true
-            dec = item.fieldDesc
+            letter = item.fieldDesc
           }
         })
         if (isEmpty) {
-          Toast('请勾选' + dec + '情况')
+          Toast('请勾选' + letter + '情况')
           return
         }
         const data = JSON.stringify(this.personList)
-        const tempObj = {}
-        tempObj.fieldCode = this.playload.fieldCode
-        tempObj.userId = this.playload.userId
-        tempObj.personVo = personVo
-        tempObj.type = this.playload.type
-        tempObj.perIndex = this.playload.perIndex
+        const Obj = {}
+        Obj.fieldCode = this.playload.fieldCode
+        Obj.userId = this.playload.userId
+        Obj.personVo = personVo
+        Obj.type = this.playload.type
+        Obj.index = this.playload.index
         if (data !== '{}') {
-          this.$store.commit('study/refreshPersonListVo', tempObj)
+          this.$store.commit('study/refreshPersonListVo', Obj)
           this.routeLeave = false
           this.$router.go(-1)
         }
@@ -264,6 +265,7 @@
     },
     created () {
       this.playload = this.$route.query
+      console.log(this.playload)
       this.type = this.playload.type
       if (this.playload.type === 'add') {
         this.title = '添加人员'
@@ -280,7 +282,6 @@
   .f15-c333 {
     font-size: 0.15rem;
     color: #333333;
-    /*width: 100px;*/
     overflow: hidden;
     word-break: break-all;//强制超出换行
   }
