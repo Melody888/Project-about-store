@@ -13,7 +13,7 @@
           <div class=""><span>总编制/已到位(人)：</span>
           <span>{{item.sumPerNum}}</span>/<span>{{item.readyPerNum}}</span>
           </div>
-          <div class="edit-btn" @click="toDetail(item.storeId,index)" >编辑/查看</div>
+          <div class="edit-btn" @click="toDetail(item.storeId, index)" >编辑/查看</div>
         </div>
       </li>
     </ul>
@@ -44,8 +44,8 @@ export default {
   methods: {
     toDetail (storeId, index) {
       this.$router.push({path: '/study/editDetail', query: {storeId: storeId, num: index}})
-      this.$store.commit('study/storeId', storeId)
-      this.$store.commit('study/projectList', null)
+      // this.$store.commit('study/storeId', storeId)
+      // this.$store.commit('study/projectList', null)
     },
     loadMore () {
       this.$store.dispatch('study/getstoreList')

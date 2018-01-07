@@ -8,12 +8,14 @@ export default {
     loading: false,
     loaded: false,
     pageIndex: 0,
-    storeId: '',
-    storeName: '',
-    projectList: null,
-    fieldCode: '',
-    userId: '',
-    projectPerVo: null,
+    storeOrgVo: {}, // 门店编制实体
+    saveVo: null, // 保存信息实体
+    // storeId: '',
+    // storeName: '',
+    // projectList: null,
+    // fieldCode: '',
+    // userId: '',
+    projectPerVo: {},
     personVo: null
   },
   getters: {
@@ -29,14 +31,8 @@ export default {
     pageIndex (state) {
       return state.pageIndex
     },
-    getstoreId (state) {
-      return state.storeId
-    },
-    getstoreName (state) {
-      return state.storeName
-    },
-    getprojectList (state) {
-      return state.projectList
+    storeOrgVo (state) {
+      return state.storeOrgVo
     },
     getprojectPerVo (state) {
       return state.projectPerVo
@@ -83,31 +79,24 @@ export default {
       }
     },
     // 编辑编制
-    getprojectList ({commit, state}) {
-      if (state.projectList == null) {
-        const storeId = state.storeId
-        return api.study.getOrgInfoByStoreId({
-          data: {
-            storeId: storeId,
-            token: simpleLocalDb.getItem('token')
-          }
-        }).then(result => {
-          if (result.responseCode === 0) {
-            commit('storeId', result.storeOrgVo.storeId)
-            commit('storeName', result.storeOrgVo.storeName)
-            commit('projectList', result.storeOrgVo.projectList)
-          }
-        })
-      }
+    geteditDetail ({state, commit}, playload) {
+      return api.study.getOrgInfoByStoreId({
+        data: {
+          storeId: playload,
+          token: simpleLocalDb.getItem('token')
+        }
+      }).then(result => {
+        if (result.responseCode === 0) {
+          commit('storeOrgVo', result.storeOrgVo)
+        }
+      })
     },
     // 项目成员
-    getPersonList ({commit, state}) {
-      const fieldCode = state.fieldCode
-      const storeId = state.storeId
+    getprojectPerVo ({state, commit}, playload) {
       return api.study.getProjectPerList({
         data: {
-          fieldCode: fieldCode,
-          storeId: storeId,
+          fieldCode: playload.fieldCode,
+          storeId: playload.storeId,
           token: simpleLocalDb.getItem('token')
         }
       }).then(res => {
@@ -153,26 +142,12 @@ export default {
     pageIndex (state, payload) {
       state.pageIndex = payload
     },
-    storeId (state, payload) {
-      state.storeId = payload
-    },
-    storeName (state, payload) {
-      state.storeName = payload
-    },
-    projectList (state, payload) {
-      state.projectList = payload
-    },
     // 修改项目编制数回到人员列表详情页看到对应项也修改
     updateProjecListSumPerNum (state, payload) {
-      let items = state.projectList
-      for (var i = 0; i < items.length; i++) {
-        if (items[i].fieldCode === payload.code) {
-          items[i].sumPerNum = payload.value
-        }
-      }
+      state.storeOrgVo.projectList[payload.index].sumPerNum = payload.sumPerNum
     },
-    fieldCode (state, payload) {
-      state.fieldCode = payload
+    storeOrgVo (state, payload) {
+      state.storeOrgVo = payload
     },
     projectPerVo (state, payload) {
       state.projectPerVo = payload
@@ -183,33 +158,21 @@ export default {
     // 添加人员信息后同步更新到编制列表
     refreshPersonListVo (state, playload) {
       console.log('>>>>>1')
-      if (state.projectList && state.projectList.length > 0) {
+      if (state.storeOrgVo.projectList && state.storeOrgVo.projectList.length > 0) {
         console.log('>>>>2')
-        state.projectList.forEach((item, FirIndex) => {
+        state.storeOrgVo.projectList.forEach((item, FirIndex) => {
           if (item.fieldCode === playload.fieldCode) {
             console.log('>>>>3')
             if (playload.type === 'edit') {
               console.log('>>>>4')
-              state.projectList[FirIndex]['personList'].splice(playload.index, 1, playload.personVo)
+              state.storeOrgVo.projectList[FirIndex].personList.splice(playload.index, 1, playload.personVo)
             } else {
-              state.projectList[FirIndex]['personList'].unshift(playload.personVo)
+              state.storeOrgVo.projectList[FirIndex].personList.unshift(playload.personVo)
+              console.log('>>>>5')
             }
             return
           }
         })
-      }
-      if (playload.type === 'edit') {
-        console.log('>>>>5')
-        if (state.projectPerVo) {
-          if (state.projectPerVo.fieldCode === playload.fieldCode) {
-            console.log('>>>>6')
-            playload.personVo.fieldList.forEach((item) => {
-              item.fieldDesc = item.selectDesc
-            })
-            state.projectPerVo.nowPerList.splice(playload.index, 1, playload.personVo)
-          }
-          return
-        }
       }
     }
   }

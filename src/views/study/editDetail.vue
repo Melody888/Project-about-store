@@ -5,33 +5,33 @@
       <div class="right" slot="right">保存修改</div>
     </bm-header>
             <div  slot="header" class="items-text">
+          <div class="items-center" v-if="storeOrgVo.storeName">
         <div class="items-top">
-          {{storeId}} {{storeName}}
+          {{storeOrgVo.storeId}} {{storeOrgVo.storeName}}
         </div>  
-          <div class="items-center">
             <span>总编制/已到位(人)：</span> 
             <span>{{totalSumPerNum}}/{{totalReadyPerNum}}</span>
           </div>   
           </div>
     <ul>
-      <li v-for="(item, index) in projectList">
+      <li v-for="item in storeOrgVo.projectList" :key="item.fieldCode">
           <div class="person-detail">
           <span class="person-name">{{item.fieldDesc}}</span>
-           <span class="edit-btn" @click="toProjectPerList(item.fieldCode,storeId,'edit',item.sumPerNum)">
+           <span class="edit-btn" @click="toProjectPerList(item.fieldCode, storeOrgVo.storeId, 'edit', item.sumPerNum)">
             编辑/查看
            </span> 
            </div>    
 
             <div class="add-detail">
           <div class=""><span>总编制/已到位(人)：</span> 
-            <span>{{item.sumPerNum}}</span>/<span>{{item.readyPerNum}}</span>
+            <span>{{item.sumPerNum}}</span>/<span>{{item.personList.length}}</span>
             <i class="icon icon-add"></i>
-            <span class="add-btn" @click="toAdd(item.fieldCode, storeId)">
+            <span class="add-btn" @click="toAdd(item.fieldCode, storeOrgVo.storeId)">
             添加人员
            </span> 
           </div>  
            </div>
-           <div class="item-scroll add-detail" v-for="(innerItem, innerIndex) in item.personList">
+           <div class="item-scroll add-detail" v-for="innerItem in item.personList">
              <i class="icon icon-people"></i>
             <div class="Num">{{innerItem.userId}}-{{innerItem.userName}}</div>
             <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
@@ -57,19 +57,18 @@ import selectPerson from '@/views/common/selectPerson'
 export default {
   data () {
     return {
-      routeLeave: true
+      storeId: ''
     }
   },
   computed: {
     ...mapGetters({
-      storeId: 'study/getstoreId',
-      storeName: 'study/getstoreName',
-      projectList: 'study/getprojectList'
+      storeOrgVo: 'study/storeOrgVo',
+      storeList: 'study/storeList'
     }),
     totalSumPerNum () {
-      if (this.projectList && this.projectList.length > 0) {
+      if (this.storeOrgVo.projectList && this.storeOrgVo.projectList.length > 0) {
         let num = 0
-        this.projectList.forEach((item) => {
+        this.storeOrgVo.projectList.forEach((item) => {
           num += +item.sumPerNum
         })
         return num
@@ -78,9 +77,9 @@ export default {
       }
     },
     totalReadyPerNum () {
-      if (this.projectList && this.projectList.length > 0) {
+      if (this.storeOrgVo.projectList && this.storeOrgVo.projectList.length > 0) {
         let num = 0
-        this.projectList.forEach((item) => {
+        this.storeOrgVo.projectList.forEach((item) => {
           num += item.personList.length
         })
         return num
@@ -91,12 +90,13 @@ export default {
   },
 
   methods: {
-    geteditDetail () {
-      return this.$store.dispatch('study/getprojectList')
+    editDetail () {
+      const sId = this.$route.query.storeId
+      this.$store.dispatch('study/geteditDetail', sId)
     },
     toProjectPerList (fieldCode, storeId, type, value) {
-      this.$store.commit('study/fieldCode', fieldCode)
-      this.$store.commit('study/storeId', storeId)
+      // this.$store.commit('study/fieldCode', fieldCode)
+      // this.$store.commit('study/storeId', storeId)
       this.$router.push({path: '/study/editProjectPerList', query: {fieldCode: fieldCode, storeId: storeId, type: type, value: value}})
     },
     toAdd (fieldCode, storeId) {
@@ -110,9 +110,22 @@ export default {
       })
     }
   },
-  created () {
-    this.geteditDetail()
+  beforeRouteEnter (to, from, next) {
+    if (from.path === '/study/editProjectPerList' || '/study/editPersonnel') {
+      next()
+    } else {
+      next(vm => {
+        vm.editDetail()
+      })
+    }
   }
+  // mounted () {
+  //   const sId = this.$route.query.storeId
+  //   this.$store.dispatch('study/geteditDetail', sId)
+  // }
+//   created () {
+//     this.editDetail()
+//   }
 }
 </script>
 <style lang="less" scoped>
@@ -134,12 +147,11 @@ export default {
   font-size: 0.13rem;
   font-weight:500;
   color: #1FB8FF;
-  margin-top: 10px;
   }
   .items-top {
     font-size: 0.15rem;
     color: #333;
-    
+    margin-bottom: 0.1rem;  
   } 
 }
 .person-detail {

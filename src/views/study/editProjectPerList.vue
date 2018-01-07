@@ -1,17 +1,17 @@
 <template>
   <bm-layout>
       <bm-header slot="header">
-          <div class="header">{{fieldDesc}}</div>        
+          <div class="header">{{fitProjectPerVo.fieldDesc}}</div>        
       </bm-header>
       <div slot="header" class="nav-top">
-     <span class="ber">编制/</span><span class="per">人</span><input type="number" class="p-num" v-model="localsum"><div class="saveBtn" @click="saveSumPerNum">确认编制数</div>   
+     <span class="ber">编制/</span><span class="per">人</span><input type="number" class="p-num" v-model="fitProjectPerVo.sumPerNum"><div class="saveBtn" @click="saveSumPerNum">确认编制数</div>   
       </div>
       <div class="flex justify-around item-line">
           <div class="hr-line"></div><span class="f12">人员名单</span><div class="hr-line"></div>
       </div>
-      <div class="no-project-perVo" v-if="nowPerList.length < 1">暂无有效人员</div>
+      <div class="no-project-perVo" v-if="fitProjectPerVo.personList && fitProjectPerVo.personList.leng < 1">暂无有效人员</div>
       <ul>
-       <li class="item-scroll add-detail nowList" v-for="(Item, Index) in nowPerList">
+       <li class="item-scroll add-detail nowList" v-for="(Item, Index) in fitProjectPerVo.personList">
              <i class="icon icon-people"></i>
             <span class="Num">{{Item.userId}}-{{Item.userName}}</span>
             <span class="edit" @click="editSave('edit', Item.userId, Index)">
@@ -19,7 +19,7 @@
            </span> 
             <div class="nowDate"><span>{{ Item.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ Item.endDate | datetime('YYYY/MM/DD')}}</span></div>
              <div class="descript"> 
-              <div class="state" v-for="state in Item.fieldList" v-if="state.fieldDesc">{{state.fieldDesc}}</div>
+              <div class="state" v-for="state in Item.fieldList" v-if="state.selectDesc">{{state.selectDesc}}</div>
               <div class="stars" v-show="Item.levelNum == 0 ? false : true">
               <input type="radio"  :value="1" :class="{'active': Item.levelNum > 0}" >
               <input type="radio"  :value="2" :class="{'active': Item.levelNum > 1}">
@@ -31,12 +31,12 @@
           </li>
           </ul>
           <div>
-          <div class="flex justify-around item-line" v-if="historyPerList.length > 0">
+          <div class="flex justify-around item-line" v-if="projectPerVo.historyPerList && projectPerVo.historyPerList.length > 0">
           <div class="hr-line"></div><span class="f12" >历史人员</span><div class="hr-line"></div>
           </div>
 
         <ul>
-           <li class="item-scroll add-detail" v-for="(innerItem, innerIndex) in historyPerList">
+           <li class="item-scroll add-detail" v-for="(innerItem, innerIndex) in projectPerVo.historyPerList">
              <i class="icon icon-people icon-people-grey"></i>
             <div class="Num">{{innerItem.userId}}-{{innerItem.userName}}</div>
             <div class="date"><span>{{ innerItem.startDate | datetime('YYYY/MM/DD')}}</span>-<span>{{ innerItem.endDate | datetime('YYYY/MM/DD')}}</span></div>
@@ -62,58 +62,77 @@ import { Toast } from 'mint-ui'
 export default {
   data () {
     return {
-      localsum: 0
+      playload: {},
+      fitProjectPerVo: {},
+      ProjectIndex: 0
     }
   },
   computed: {
     ...mapGetters({
+      storeOrgVo: 'study/storeOrgVo',
       projectPerVo: 'study/getprojectPerVo'
-    }),
-    fieldDesc () {
-      return this.projectPerVo ? this.projectPerVo.fieldDesc : ''
-    },
-    fieldCode () {
-      return this.projectPerVo ? this.projectPerVo.fieldCode : ''
-    },
-    sumPerNum () {
-      return this.projectPerVo ? this.projectPerVo.sumPerNum : 0
-    },
-    nowPerList () {
-      return this.projectPerVo ? this.projectPerVo.nowPerList : []
-    },
-    historyPerList () {
-      return this.projectPerVo ? this.projectPerVo.historyPerList : []
-    }
+    })
+    // fieldDesc () {
+    //   return this.projectPerVo ? this.projectPerVo.fieldDesc : ''
+    // },
+    // fieldCode () {
+    //   return this.projectPerVo ? this.projectPerVo.fieldCode : ''
+    // },
+    // sumPerNum () {
+    //   return this.projectPerVo ? this.projectPerVo.sumPerNum : 0
+    // },
+    // nowPerList () {
+    //   return this.projectPerVo ? this.projectPerVo.nowPerList : []
+    // },
+    // historyPerList () {
+    //   return this.projectPerVo ? this.projectPerVo.historyPerList : []
+    // }
   },
   methods: {
-    getpersonList () {
-      return this.$store.dispatch('study/getPersonList')
-    },
     saveSumPerNum () {
       this.$store.commit('study/updateProjecListSumPerNum', {
-        code: this.projectPerVo.fieldCode,
-        value: this.localsum
+        index: this.ProjectIndex,
+        sumPerNum: +this.fitProjectPerVo.sumPerNum
       })
       Toast('编制数据维护成功')
     },
     editSave (type, userId, index) {
-      this.playload = this.$route.query
       this.$router.push({path: '/study/editPersonnel', query: {type: type, userId: userId, storeId: this.playload.storeId, fieldCode: this.playload.fieldCode, index: index}})
-    }
-  },
-  beforeRouteEnter (to, from, next) {
-    if (from.path === '/study/editPersonnel') {
-      next()
-    } else {
-      next(vm => {
-        vm.getpersonList()
+    },
+    existStoreOrgVo () {
+      this.storeOrgVo.projectList.forEach((item, index) => {
+        if (item.fieldCode === this.playload.fieldCode) {
+          this.fitProjectPerVo = item
+          this.ProjectIndex = index
+        }
+      })
+    },
+    fetchStoreOrgVo () {
+      const storeId = this.$route.query.storeId
+      this.$store.dispatch('study/getprojectPerVo', storeId).then(() => {
+        this.playload = this.$route.query
+        const data = JSON.stringify(this.storeOrgVo)
+        if (data !== '{}') {
+          this.existStoreOrgVo()
+        }
       })
     }
   },
-  created () {
-    this.localsum = this.$route.query.value
+  // created () {
+  //   this.localsum = this.$route.query.value
+  // },
+  mounted () {
+    this.playload = this.$route.query
+    this.$store.dispatch('study/getprojectPerVo', this.playload)
+    const data = JSON.stringify(this.storeOrgVo)
+    if (data !== '{}') {
+      this.existStoreOrgVo()
+    } else {
+      this.fetchStoreOrgVo()
+    }
   }
 }
+
 </script>
 <style lang="less" scoped>
 .header {

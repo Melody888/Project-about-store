@@ -94,7 +94,7 @@
     },
     computed: {
       ...mapGetters({
-        projectList: 'study/getprojectList'
+        storeOrgVo: 'study/storeOrgVo'
       }),
       limitStartDateBegin () { // 限制选择时间范围
         if (this.type === 'edit') {
@@ -188,7 +188,7 @@
         }
       },
       existStoreOrgVo () { // 从projectList 找到对应 人员信息
-        this.projectList.forEach((item, index) => {
+        this.storeOrgVo.projectList.forEach((item, index) => {
           if (item.fieldCode === this.playload.fieldCode) {
             const pstring = JSON.stringify(item['personList'][this.playload.index])
 
@@ -249,7 +249,7 @@
           Toast('请勾选' + letter + '情况')
           return
         }
-        const data = JSON.stringify(this.personList)
+        const data = JSON.stringify(this.storeOrgVo)
         const Obj = {}
         Obj.fieldCode = this.playload.fieldCode
         Obj.userId = this.playload.userId
@@ -265,7 +265,6 @@
     },
     created () {
       this.playload = this.$route.query
-      console.log(this.playload)
       this.type = this.playload.type
       if (this.playload.type === 'add') {
         this.title = '添加人员'
