@@ -1,4 +1,4 @@
-// import {Toast, Indicator} from 'mint-ui'
+import {Toast, Indicator} from 'mint-ui'
 import api from '@/api'
 
 export default {
@@ -9,7 +9,7 @@ export default {
     loaded: false,
     pageIndex: 0,
     storeOrgVo: {}, // 门店编制实体
-    saveVo: null, // 保存信息实体
+    saveVo: {}, // 保存信息实体
     // storeId: '',
     // storeName: '',
     // projectList: null,
@@ -47,7 +47,7 @@ export default {
       const pageSize = 15
       const storeList = state.storeList
       const pageIndex = state.pageIndex
-      // Indicator.open()
+      Indicator.open()
       commit('loading', true)
       if (!state.loading || !state.loaded) {
         return api.study.getstoreList({
@@ -57,7 +57,7 @@ export default {
             token: simpleLocalDb.getItem('token')
           }
         }).then(result => {
-        // Indicator.close()
+          Indicator.close()
         // if (result.responseCode === 0) {
           if (typeof result.responseCode === 'number') {
             const pl = result.storeList
@@ -80,19 +80,19 @@ export default {
     },
     // 编辑编制,通过判断编辑编制界面中的storeOrgVo是否有数据来渲染请求数据
     geteditDetail ({state, commit}, playload) {
-      // const data = JSON.stringify(state.storeOrgVo)
-      // if (data === '{}') {
-      return api.study.getOrgInfoByStoreId({
-        data: {
-          storeId: playload,
-          token: simpleLocalDb.getItem('token')
-        }
-      }).then(result => {
-        if (result.responseCode === 0) {
-          commit('storeOrgVo', result.storeOrgVo)
-        }
-      })
-      // }
+      const data = JSON.stringify(state.storeOrgVo)
+      if (data === '{}') {
+        return api.study.getOrgInfoByStoreId({
+          data: {
+            storeId: playload,
+            token: simpleLocalDb.getItem('token')
+          }
+        }).then(result => {
+          if (result.responseCode === 0) {
+            commit('storeOrgVo', result.storeOrgVo)
+          }
+        })
+      }
     },
     // 项目成员
     getprojectPerVo ({state, commit}, playload) {
@@ -129,8 +129,25 @@ export default {
           console.log(false)
         }
       })
+    },
+    saveData ({state, commit}) {
+      Indicator.open()
+      commit('structured')
+      return api.study.saveStoreOrgInfo({
+        data: state.saveVo
+      }).then(
+        result => {
+          Indicator.close()
+          if (result.responseCode === 0) {
+            Toast('保存成功')
+            return true
+          } else {
+            Toast(result.responseMsg)
+            return false
+          }
+        }
+      )
     }
-
   },
   mutations: {
     storeList (state, payload) {
@@ -178,6 +195,33 @@ export default {
           }
         })
       }
+    },
+    // 保存修改 数据
+    structured (state) {
+      state.saveVo['storeId'] = state.storeOrgVo['storeId']
+      const projectList = state.storeOrgVo['projectList'].map(project => {
+        return {
+          fieldCode: project.fieldCode,
+          personList: project.personList.map(person => {
+            return {
+              endDate: person.endDate === 0 ? 253402185600000 : person.endDate,
+              fieldList: person.fieldList.map(field => {
+                return {
+                  fieldCode: field.selectCode,
+                  fieldContent: field.fieldContent
+                }
+              }),
+              levelContent: person.levelContent,
+              levelNum: person.levelNum,
+              startDate: person.startDate,
+              userId: person.userId
+            }
+          }),
+          sumPerNum: project.sumPerNum
+        }
+      })
+      state.saveVo['projectList'] = projectList
+      state.saveVo['token'] = simpleLocalDb.getItem('token')
     }
   }
 }

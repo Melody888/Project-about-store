@@ -2,7 +2,7 @@
   <bm-layout>
     <bm-header slot="header">
       <p>编辑编制</p>
-      <div class="right" slot="right">保存修改</div>
+      <div class="right" slot="right" @click="saveEdit">保存修改</div>
     </bm-header>
             <div  slot="header" class="items-text">
           <div class="items-center" v-if="storeOrgVo.storeName">
@@ -123,22 +123,34 @@ export default {
       }, error => {
         console.log(error)
       })
+    },
+    saveEdit () {
+      this.$store.dispatch('study/saveData').then((flag) => {
+        if (!flag) return
+        this.routeLeave = false
+        if (this.$route.query.type === 'edit') {
+          const num = this.$route.query.num
+          this.storeList[num].sumPerNum = this.totalSumPerNum
+          this.storeList[num].readyPerNum = this.totalReadyPerNum
+        }
+        this.$router.go(-1)
+      })
     }
   },
   // 钩子函数:通过判断地址返回实现编辑修改的信息就不重新请求数据，如果是第一次渲染页面就请求数据
-  beforeRouteEnter (to, from, next) {
-    if (from.path === '/study/editProjectPerList' || from.path === '/study/editPersonnel') {
-      next()
-    } else {
-      next(vm => {
-        const sId = vm.$route.query.storeId
-        vm.$store.dispatch('study/geteditDetail', sId)
-      })
-    }
-  }
-  // created () {
-  //   this.editDetail()
+  // beforeRouteEnter (to, from, next) {
+  //   if (from.path === '/study/editProjectPerList' || from.path === '/study/editPersonnel') {
+  //     next()
+  //   } else {
+  //     next(vm => {
+  //       const sId = vm.$route.query.storeId
+  //       vm.$store.dispatch('study/geteditDetail', sId)
+  //     })
+  //   }
   // }
+  created () {
+    this.editDetail()
+  }
 }
 </script>
 <style lang="less" scoped>
