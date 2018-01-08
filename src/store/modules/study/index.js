@@ -80,16 +80,19 @@ export default {
     },
     // 编辑编制
     geteditDetail ({state, commit}, playload) {
-      return api.study.getOrgInfoByStoreId({
-        data: {
-          storeId: playload,
-          token: simpleLocalDb.getItem('token')
-        }
-      }).then(result => {
-        if (result.responseCode === 0) {
-          commit('storeOrgVo', result.storeOrgVo)
-        }
-      })
+      const data = JSON.stringify(state.storeOrgVo)
+      if (data === '{}') {
+        return api.study.getOrgInfoByStoreId({
+          data: {
+            storeId: playload,
+            token: simpleLocalDb.getItem('token')
+          }
+        }).then(result => {
+          if (result.responseCode === 0) {
+            commit('storeOrgVo', result.storeOrgVo)
+          }
+        })
+      }
     },
     // 项目成员
     getprojectPerVo ({state, commit}, playload) {
@@ -144,7 +147,13 @@ export default {
     },
     // 修改项目编制数回到人员列表详情页看到对应项也修改
     updateProjecListSumPerNum (state, payload) {
-      state.storeOrgVo.projectList[payload.index].sumPerNum = payload.sumPerNum
+      let item = state.storeOrgVo.projectList
+      for (var i = 0; i < item.length; i++) {
+        if (item[i].fieldCode === payload.fieldCode) {
+          item[i].sumPerNum = payload.sumPerNum
+        }
+      }
+      // state.storeOrgVo.projectList[payload.index].sumPerNum = payload.sumPerNum
     },
     storeOrgVo (state, payload) {
       state.storeOrgVo = payload
@@ -157,18 +166,13 @@ export default {
     },
     // 添加人员信息后同步更新到编制列表
     refreshPersonListVo (state, playload) {
-      console.log('>>>>>1')
       if (state.storeOrgVo.projectList && state.storeOrgVo.projectList.length > 0) {
-        console.log('>>>>2')
         state.storeOrgVo.projectList.forEach((item, FirIndex) => {
           if (item.fieldCode === playload.fieldCode) {
-            console.log('>>>>3')
             if (playload.type === 'edit') {
-              console.log('>>>>4')
               state.storeOrgVo.projectList[FirIndex].personList.splice(playload.index, 1, playload.personVo)
             } else {
               state.storeOrgVo.projectList[FirIndex].personList.unshift(playload.personVo)
-              console.log('>>>>5')
             }
             return
           }

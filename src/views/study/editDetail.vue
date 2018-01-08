@@ -57,7 +57,8 @@ import selectPerson from '@/views/common/selectPerson'
 export default {
   data () {
     return {
-      storeId: ''
+      storeId: '',
+      routeLeave: true
     }
   },
   computed: {
@@ -88,7 +89,21 @@ export default {
       }
     }
   },
-
+  beforeRouteLeave (to, from, next) {
+    if (to.path === '/study' && this.routeLeave) {
+      this.$messagebox.confirm('确定离开当前编辑页面？', {
+        confirmButtonText: '确 定',
+        cancelButtonText: '取 消',
+        cancelButtonClass: 'cancel-confirm-btn'
+      }).then(() => {
+        next()
+      }, () => {
+        this.$router.go(1)
+      })
+    } else {
+      next()
+    }
+  },
   methods: {
     editDetail () {
       const sId = this.$route.query.storeId
@@ -110,22 +125,25 @@ export default {
       })
     }
   },
-  beforeRouteEnter (to, from, next) {
-    if (from.path === '/study/editProjectPerList' || '/study/editPersonnel') {
-      next()
-    } else {
-      next(vm => {
-        vm.editDetail()
-      })
-    }
-  }
   // mounted () {
   //   const sId = this.$route.query.storeId
   //   this.$store.dispatch('study/geteditDetail', sId)
   // }
-//   created () {
-//     this.editDetail()
-//   }
+  // beforeRouteEnter (to, from, next) {
+  //   if (from.path === '/study/editProjectPerList' || from.path === '/study/editPersonnel') {
+  //     console.log(111)
+  //     next()
+  //   } else {
+  //     console.log(222)
+  //     next(vm => {
+  //       const sId = vm.$route.query.storeId
+  //       vm.$store.dispatch('study/geteditDetail', sId)
+  //     })
+  //   }
+  // }
+  created () {
+    this.editDetail()
+  }
 }
 </script>
 <style lang="less" scoped>

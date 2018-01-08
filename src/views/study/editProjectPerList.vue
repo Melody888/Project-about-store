@@ -9,7 +9,7 @@
       <div class="flex justify-around item-line">
           <div class="hr-line"></div><span class="f12">人员名单</span><div class="hr-line"></div>
       </div>
-      <div class="no-project-perVo" v-if="fitProjectPerVo.personList && fitProjectPerVo.personList.leng < 1">暂无有效人员</div>
+      <div class="no-project-perVo" v-if="fitProjectPerVo.personList && fitProjectPerVo.personList.length < 1">暂无有效人员</div>
       <ul>
        <li class="item-scroll add-detail nowList" v-for="(Item, Index) in fitProjectPerVo.personList">
              <i class="icon icon-people"></i>
@@ -91,7 +91,7 @@ export default {
   methods: {
     saveSumPerNum () {
       this.$store.commit('study/updateProjecListSumPerNum', {
-        index: this.ProjectIndex,
+        fieldCode: this.fitProjectPerVo.fieldCode,
         sumPerNum: +this.fitProjectPerVo.sumPerNum
       })
       Toast('编制数据维护成功')
