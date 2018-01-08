@@ -78,21 +78,21 @@ export default {
         })
       }
     },
-    // 编辑编制
+    // 编辑编制,通过判断编辑编制界面中的storeOrgVo是否有数据来渲染请求数据
     geteditDetail ({state, commit}, playload) {
-      const data = JSON.stringify(state.storeOrgVo)
-      if (data === '{}') {
-        return api.study.getOrgInfoByStoreId({
-          data: {
-            storeId: playload,
-            token: simpleLocalDb.getItem('token')
-          }
-        }).then(result => {
-          if (result.responseCode === 0) {
-            commit('storeOrgVo', result.storeOrgVo)
-          }
-        })
-      }
+      // const data = JSON.stringify(state.storeOrgVo)
+      // if (data === '{}') {
+      return api.study.getOrgInfoByStoreId({
+        data: {
+          storeId: playload,
+          token: simpleLocalDb.getItem('token')
+        }
+      }).then(result => {
+        if (result.responseCode === 0) {
+          commit('storeOrgVo', result.storeOrgVo)
+        }
+      })
+      // }
     },
     // 项目成员
     getprojectPerVo ({state, commit}, playload) {

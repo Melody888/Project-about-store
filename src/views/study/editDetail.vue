@@ -125,25 +125,20 @@ export default {
       })
     }
   },
-  // mounted () {
-  //   const sId = this.$route.query.storeId
-  //   this.$store.dispatch('study/geteditDetail', sId)
-  // }
-  // beforeRouteEnter (to, from, next) {
-  //   if (from.path === '/study/editProjectPerList' || from.path === '/study/editPersonnel') {
-  //     console.log(111)
-  //     next()
-  //   } else {
-  //     console.log(222)
-  //     next(vm => {
-  //       const sId = vm.$route.query.storeId
-  //       vm.$store.dispatch('study/geteditDetail', sId)
-  //     })
-  //   }
-  // }
-  created () {
-    this.editDetail()
+  // 钩子函数:通过判断地址返回实现编辑修改的信息就不重新请求数据，如果是第一次渲染页面就请求数据
+  beforeRouteEnter (to, from, next) {
+    if (from.path === '/study/editProjectPerList' || from.path === '/study/editPersonnel') {
+      next()
+    } else {
+      next(vm => {
+        const sId = vm.$route.query.storeId
+        vm.$store.dispatch('study/geteditDetail', sId)
+      })
+    }
   }
+  // created () {
+  //   this.editDetail()
+  // }
 }
 </script>
 <style lang="less" scoped>
