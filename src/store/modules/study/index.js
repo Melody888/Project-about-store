@@ -10,11 +10,6 @@ export default {
     pageIndex: 0,
     storeOrgVo: {}, // 门店编制实体
     saveVo: {}, // 保存信息实体
-    // storeId: '',
-    // storeName: '',
-    // projectList: null,
-    // fieldCode: '',
-    // userId: '',
     projectPerVo: {},
     personVo: null
   },
@@ -43,6 +38,7 @@ export default {
   },
   actions: {
     // 调用api
+    // 门店列表
     getstoreList ({commit, state}) {
       const pageSize = 15
       const storeList = state.storeList
@@ -78,21 +74,21 @@ export default {
         })
       }
     },
-    // 编辑编制,通过判断编辑编制界面中的storeOrgVo是否有数据来渲染请求数据
+    // 编辑编制
     geteditDetail ({state, commit}, playload) {
-      const data = JSON.stringify(state.storeOrgVo)
-      if (data === '{}') {
-        return api.study.getOrgInfoByStoreId({
-          data: {
-            storeId: playload,
-            token: simpleLocalDb.getItem('token')
-          }
-        }).then(result => {
-          if (result.responseCode === 0) {
-            commit('storeOrgVo', result.storeOrgVo)
-          }
-        })
-      }
+      // const data = JSON.stringify(state.storeOrgVo)
+      // if (data === '{}') {
+      return api.study.getOrgInfoByStoreId({
+        data: {
+          storeId: playload,
+          token: simpleLocalDb.getItem('token')
+        }
+      }).then(result => {
+        if (result.responseCode === 0) {
+          commit('storeOrgVo', result.storeOrgVo)
+        }
+      })
+      // }
     },
     // 项目成员
     getprojectPerVo ({state, commit}, playload) {
@@ -130,8 +126,10 @@ export default {
         }
       })
     },
-    saveData ({state, commit}) {
+    // 保存修改
+    saveData ({state, commit}, playload) {
       Indicator.open()
+      // 在structured中保存saveVo的数据使之可以请求API
       commit('structured')
       return api.study.saveStoreOrgInfo({
         data: state.saveVo
@@ -140,6 +138,8 @@ export default {
           Indicator.close()
           if (result.responseCode === 0) {
             Toast('保存成功')
+            // 更新门店列表对应的数据
+            commit('refreshstoreList', playload)
             return true
           } else {
             Toast(result.responseMsg)
@@ -196,7 +196,12 @@ export default {
         })
       }
     },
-    // 保存修改 数据
+    // 保存修改后更新门店编制列表里面对应的数据
+    refreshstoreList (state, playload) {
+      state.storeList[playload.num].sumPerNum = playload.totalSumPerNum
+      state.storeList[playload.num].readyPerNum = playload.totalReadyPerNum
+    },
+    // 根据数据接口要求给出编辑后的数据放进state.saveVo然后请求api
     structured (state) {
       state.saveVo['storeId'] = state.storeOrgVo['storeId']
       const projectList = state.storeOrgVo['projectList'].map(project => {

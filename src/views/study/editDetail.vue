@@ -110,8 +110,6 @@ export default {
       this.$store.dispatch('study/geteditDetail', sId)
     },
     toProjectPerList (fieldCode, storeId, type, value) {
-      // this.$store.commit('study/fieldCode', fieldCode)
-      // this.$store.commit('study/storeId', storeId)
       this.$router.push({path: '/study/editProjectPerList', query: {fieldCode: fieldCode, storeId: storeId, type: type, value: value}})
     },
     toAdd (fieldCode, storeId) {
@@ -125,32 +123,34 @@ export default {
       })
     },
     saveEdit () {
-      this.$store.dispatch('study/saveData').then((flag) => {
+      const fields = {}
+      fields.num = this.$route.query.num
+      fields.totalReadyPerNum = this.totalReadyPerNum
+      fields.totalSumPerNum = this.totalSumPerNum
+      this.$store.dispatch('study/saveData', fields).then((flag) => {
         if (!flag) return
         this.routeLeave = false
-        if (this.$route.query.type === 'edit') {
-          const num = this.$route.query.num
-          this.storeList[num].sumPerNum = this.totalSumPerNum
-          this.storeList[num].readyPerNum = this.totalReadyPerNum
-        }
         this.$router.go(-1)
       })
+      // this.routeLeave = false
+      // this.$router.go(-1)
+      // this.$store.dispatch('study/refreshStoreList')
     }
   },
   // 钩子函数:通过判断地址返回实现编辑修改的信息就不重新请求数据，如果是第一次渲染页面就请求数据
-  // beforeRouteEnter (to, from, next) {
-  //   if (from.path === '/study/editProjectPerList' || from.path === '/study/editPersonnel') {
-  //     next()
-  //   } else {
-  //     next(vm => {
-  //       const sId = vm.$route.query.storeId
-  //       vm.$store.dispatch('study/geteditDetail', sId)
-  //     })
-  //   }
-  // }
-  created () {
-    this.editDetail()
+  beforeRouteEnter (to, from, next) {
+    if (from.path === '/study/editProjectPerList' || from.path === '/study/editPersonnel') {
+      next()
+    } else {
+      next(vm => {
+        const sId = vm.$route.query.storeId
+        vm.$store.dispatch('study/geteditDetail', sId)
+      })
+    }
   }
+  // created () {
+  //   this.editDetail()
+  // }
 }
 </script>
 <style lang="less" scoped>
