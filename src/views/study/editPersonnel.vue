@@ -175,10 +175,7 @@
         }
       },
       selectValue (list, item) {  // 判断选择是否完成，已选的清空，未选的做出选择
-        if (list.fieldCode === item.selectCode) {
-          item.selectCode = ''
-          item.selectDesc = ''
-        } else {
+        if (list.fieldCode !== item.selectCode) {
           item.selectCode = list.fieldCode
           item['radioFieldList'].forEach((i, index) => {
             if (i.fieldCode === list.fieldCode) {
@@ -205,11 +202,16 @@
       },
       confirmStartDate (val) {  // 确定开始日期
         this.isChange = true
-        this.personVo.startDate = val.getTime()
+        // this.personVo.startDate = val.getTime()
+        if (val.getTime() > this.personVo.endDate && this.personVo.endDate !== 0) {
+          Toast('开始时间不能大于结束时间')
+        } else {
+          this.personVo.startDate = val.getTime()
+        }
       },
       confirmEndDate (val) {  // 确定结束日期
         if (this.personVo.startDate > val.getTime()) {
-          Toast('开始时间大于结束时间')
+          Toast('开始时间不能大于结束时间')
         } else {
           this.personVo.endDate = val.getTime()
         }
